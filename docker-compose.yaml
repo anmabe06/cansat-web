@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  mysqldb:
+    image: mysql:8
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=somepassword
+      - MYSQL_USER=cansat
+      - MYSQL_PASSWORD=cansat23
+      - MYSQL_DATABASE=cansat
+      - TZ='Europe/Madrid'
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+  grafana:
+   image: mygrafana:latest
+   restart: always
+   environment:
+     - DATABASE_USER=cansat
+     - DATABASE_PASS=cansat23
+     - DATABASE_NAME=cansat
+     - DATABASE_HOST=mysqldb
+   ports:
+     - 9000:3000
+   volumes:
+     - grafana-data:/var/lib/grafana
+
+volumes:
+  mysqldata:
+  grafana-data:
