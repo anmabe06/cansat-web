@@ -12,6 +12,8 @@ import random
 from collections.abc import Callable
 import re
 from googleearthplot.googleearthplot import googleearthplot
+import datetime
+import time
 
 
 # pip install mysql-connector-python
@@ -20,42 +22,50 @@ from googleearthplot.googleearthplot import googleearthplot
 # https://grafana.com/docs/grafana/latest/datasources/mysql
 
 ## Payload format, if separator is |
-# !date|latitude|longitude|altitude|course|speed|temperature|pressure|humidity|gas|co2|uva1|uva2!
+# !date|latitude|longitude|altitude|course|horizontal_speed|vertical_speed|x_rotation|y_rotation|internal_temperature_1|internal_temperature_2|external_temperature|iaq|pressure|humidity|bvoc|co2|uva_1|uva_2|beta_particles|satellites_connected!
 # Data arrives in the form of a raw UTF-8 encoded string.
 
 #TODO work this out with the cansat code.
-PAYLOAD_REGEX = re.compile(r'!([^\|!]+\|){12}[^\|!]+!')
+PAYLOAD_REGEX = re.compile(r'!([^\|!]+\|){20}[^\|!]+!')
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 class DataPayload:
-    def __init__(self, date: str, lat: float = None, lon: float = None,
-                 altitude: float = None, course: float = None, speed: float = None,
-                 age: int = None, satellites: int = None, temperature: float = None,
-                 pressure:float = None, humidity: float = None, co2: float = None,
-                 iaq: int = None, bvoc: int = None, uva1: int = None,
-                 uva2: int = None) -> None:
-        self.date = date
+    def __init__(self, date: str, lat: float = None, lon: float = None, altitude: float = None, 
+                course: float = None, horizontal_speed: float = None, vertical_speed: float = None, 
+                x_rotation: float = None, y_rotation: float = None, internal_temperature_1: float = None, 
+                internal_temperature_2: float = None, external_temperature: float = None, iaq: float = None, 
+                pressure: float = None, humidity: float = None, bvoc: float = None, co2: float = None, 
+                uva_1: float = None, uva_2: float = None, beta_particles: float = None, satellites_connected: float = None):
+        # TODO: When date is received correctly, update the following 3 lines
+        # self.date = date
+        # self.date = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        self.date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         self.latitude = lat
         self.longitude = lon
         self.altitude = altitude
         self.course = course
-        self.horizontal_speed = speed
-        self.satellites = satellites
-        self.temperature = temperature
+        self.horizontal_speed = horizontal_speed
+        self.vertical_speed = vertical_speed
+        if horizontal_speed is not None and vertical_speed is not None:
+            #self.net_speed = (horizontal_speed^2)*(vertical_speed^2)    # Calculated
+            pass
+        self.x_rotation = x_rotation
+        self.y_rotation = y_rotation
+        self.internal_temperature_1 = internal_temperature_1
+        self.internal_temperature_2 = internal_temperature_2
+        self.external_temperature = external_temperature
+        self.iaq = iaq
         self.pressure = pressure
         self.humidity = humidity
-        self.iaq = iaq
         self.bvoc = bvoc
         self.co2 = co2
-        self.uva1 = uva1
-        self.uva2 = uva2
-        self.vertical_speed = None
-        self.horizontal_acceleration = None
-        self.vertical_acceleration = None
-        self.calculated_altitude = None #TODO 44330 * [1-(pressure/p0)^(1/5.225)]
+        self.uva_1 = uva_1
+        self.uva_2 = uva_2
+        self.beta_particles = beta_particles
+        self.satellites_connected = satellites_connected
     
     def compute_synthetics(self, prev) -> None:
-        if self.altitude is not None and prev.altitude is not None:
+        if self.altitude is not None and prev.altitude is not None and self.date != prev.date:
             d1, d0 = datetime.datetime.strptime(self.date, DATETIME_FORMAT), datetime.datetime.strptime(prev.date, DATETIME_FORMAT)
             elapsed_time = (d1-d0).seconds+(d1-d0).microseconds
             self.vertical_speed = (prev.altitude - self.altitude)/elapsed_time
@@ -70,30 +80,47 @@ def parse_payload(raw_data:str, separator:str) -> DataPayload:
     parts = raw_data.split(separator)
     date = parts[0]
     data = DataPayload(date)
-    if parts[1] != "":
+    if parts[1] != "" and parts[1] != "-":
         data.latitude = float(parts[1])
-    if parts[2] != "":
+    if parts[2] != "" and parts[2] != "-":
         data.longitude = float(parts[2])
-    if parts[3] != "":
+    if parts[3] != "" and parts[3] != "-":
         data.altitude = float(parts[3])
-    if parts[4] != "":
+    if parts[4] != "" and parts[4] != "-":
         data.course = float(parts[4])
-    if parts[5] != "":
+    if parts[5] != "" and parts[5] != "-":
         data.horizontal_speed = float(parts[5])
-    if parts[6] != "":
-        data.temperature = float(parts[6])
-    if parts[7] != "":
-        data.pressure = float(parts[7])
-    if parts[8] != "":
-        data.humidity = float(parts[8])
-    if parts[9] != "":
-        pass
-    if parts[10] != "":
-        data.co2 = float(parts[10])
-    if parts[11] != "":
-        data.uva1 = int(parts[11])
-    if parts[12] != "":
-        data.uva2 = int(parts[12])
+    if parts[6] != "" and parts[6] != "-":
+        data.vertical_speed = float(parts[6])
+    if parts[7] != "" and parts[7] != "-":
+        data.x_rotation = float(parts[7])
+    if parts[8] != "" and parts[8] != "-":
+        data.y_rotation = float(parts[8])
+    if parts[9] != "" and parts[9] != "-":
+        data.internal_temperature_1 = float(parts[9])
+    if parts[10] != "" and parts[10] != "-":
+        data.internal_temperature_2 = float(parts[10])
+    if parts[11] != "" and parts[11] != "-":
+        data.external_temperature = float(parts[11])
+    if parts[12] != "" and parts[12] != "-":
+        data.iaq = float(parts[12])
+    if parts[13] != "" and parts[13] != "-":
+        data.pressure = float(parts[13])
+    if parts[14] != "" and parts[14] != "-":
+        data.humidity = float(parts[14])
+    if parts[15] != "" and parts[15] != "-":
+        data.bvoc = float(parts[15])
+    if parts[16] != "" and parts[16] != "-":
+        data.co2 = float(parts[16])
+    if parts[17] != "" and parts[17] != "-":
+        data.uva_1 = float(parts[17])
+    if parts[18] != "" and parts[18] != "-":
+        data.uva_2 = float(parts[18])
+    if parts[19] != "" and parts[19] != "-":
+        data.beta_particles = float(parts[19])
+    if parts[20] != "" and parts[20] != "-":
+        data.satellites_connected = float(parts[20])
+    
     return data
 
 def pretty_print_payload(raw_data:DataPayload) -> str:
@@ -103,24 +130,36 @@ def pretty_print_payload(raw_data:DataPayload) -> str:
         f"Alt={raw_data.altitude}. "+\
         f"Course={raw_data.course}. "+\
         f"HSpeed={raw_data.horizontal_speed}. "+\
-        f"Satellites={raw_data.satellites}. "+\
-        f"Temperature={raw_data.temperature}. "+\
+        f"VSpeed={raw_data.vertical_speed}. "+\
+        f"XRotation={raw_data.x_rotation}. "+\
+        f"YRotation={raw_data.y_rotation}. "+\
+        f"IntTemp1={raw_data.internal_temperature_1}. "+\
+        f"IntTemp2={raw_data.internal_temperature_2}. "+\
+        f"ExtTemp={raw_data.external_temperature}. "+\
+        f"IAQ={raw_data.iaq}. "+\
         f"Pressure={raw_data.pressure}. "+\
         f"Humidity={raw_data.humidity}. "+\
-        f"IAQ={raw_data.iaq}. "+\
         f"bVOC={raw_data.bvoc}. "+\
         f"CO2={raw_data.co2}. "+\
-        f"UVA1={raw_data.uva1}. "+\
-        f"UVA2={raw_data.uva2}. "+\
-        f"VSpeed={raw_data.vertical_speed}. "
+        f"uva_1={raw_data.uva_1}. "+\
+        f"uva_2={raw_data.uva_2}. "+\
+        f"Temperature={raw_data.beta_particles}. "+\
+        f"Satellites={raw_data.satellites_connected}. "
+
+        # TODO: Move upwards
+        # f"NSpeed={raw_data.net_speed}. "+\
 
 def serialize_payload(raw_data:DataPayload, separator:str) -> str:
     return f"!{raw_data.date}{separator}{raw_data.latitude}{separator}"+\
         f"{raw_data.longitude}{separator}{raw_data.altitude}{separator}"+\
         f"{raw_data.course}{separator}{raw_data.horizontal_speed}{separator}"+\
-        f"{raw_data.temperature}{separator}{raw_data.pressure}{separator}"+\
-        f"{raw_data.humidity}{separator}0{separator}"+\
-        f"{raw_data.co2}{separator}{raw_data.uva1}{separator}{raw_data.uva2}!"
+        f"{raw_data.vertical_speed}{separator}{raw_data.x_rotation}{separator}"+\
+        f"{raw_data.y_rotation}{separator}{raw_data.internal_temperature_1}{separator}"+\
+        f"{raw_data.internal_temperature_2}{separator}{raw_data.external_temperature}{separator}"+\
+        f"{raw_data.iaq}{separator}{raw_data.pressure}{separator}"+\
+        f"{raw_data.humidity}{separator}{raw_data.bvoc}{separator}"+\
+        f"{raw_data.co2}{separator}{raw_data.uva_1}{separator}{raw_data.uva_2}"+\
+        f"{raw_data.beta_particles}{separator}{raw_data.satellites_connected}{separator}!"
 
 class Reader(ABC):
     def __init__(self) -> None:
@@ -159,6 +198,7 @@ class SerialReader(Reader):
             result = self._serial.read(100)
             buffer += (result.decode('utf-8'))
             buffer, payloads = self._extract_payloads(buffer)
+           # print(buffer)
             for payload in payloads:
                 callback(payload)
 
@@ -193,8 +233,17 @@ class SQLWriter(Writer):
             connection = mysql.connector.connect(
                 host=endpoint,
                 user=user,
-                passwd=password
+                password=password
             )
+
+            if connection.is_connected():
+                db_Info = connection.get_server_info()
+                print("Connected to MySQL Server version ", db_Info)
+                cursor = connection.cursor()
+                cursor.execute("select database();")
+                record = cursor.fetchone()
+                print("You're connected to database: ", record)
+
         except Error as err:
             raise Error(f"Unable to connect to database: '{err}'")
         self._connection = connection
@@ -212,36 +261,60 @@ class SQLWriter(Writer):
             raise Error(f"Error executing query '{query}': '{err}'")
 
     def _create_table(self) -> None:
-        #TODO readjust
+        #SET @@sql_mode = sys.list_add(@@sql_mode, 'TIME_TRUNCATE_FRACTIONAL');
         self._execute_query(f'''CREATE TABLE IF NOT EXISTS {SQLWriter.table_name}(
-            time DATETIME NOT NULL,
+            time DATETIME(2),
             latitude FLOAT,
             longitude FLOAT,
+            altitude FLOAT,
             course FLOAT,
             horizontal_speed FLOAT,
-            temperature FLOAT,
+            x_rotation FLOAT,
+            y_rotation FLOAT,
+            internal_temperature_1 FLOAT,
+            internal_temperature_2 FLOAT,
+            external_temperature FLOAT,
+            iaq FLOAT,
             pressure FLOAT,
             humidity FLOAT,
-            gas FLOAT,
+            bvoc FLOAT,
             co2 FLOAT,
-            uva1 INT,
-            uva2 INT);''')
+            uva_1 FLOAT,
+            uva_2 FLOAT,
+            beta_particles FLOAT,
+            satellites_connected FLOAT);''')
 
     def write(self, data:DataPayload) -> None:
         try:
-            self._execute_query(f'''INSERT into {SQLWriter.table_name} VALUES(
-                "{data.date}",
+            for value_key in data.__dict__:
+                if value_key == None:
+                    data.__dict__[value_key] = "NULL"
+
+            self._execute_query(f'''INSERT into {SQLWriter.table_name} 
+                (time, latitude, longitude, altitude, course, horizontal_speed, x_rotation, y_rotation, internal_temperature_1, internal_temperature_2, external_temperature, iaq, pressure, humidity, bvoc, co2, uva_1, uva_2, beta_particles, satellites_connected) 
+                VALUES(
+                '{data.date}',
                 {data.latitude},
                 {data.longitude},
+                {data.altitude},
                 {data.course},
                 {data.horizontal_speed},
-                {data.temperature},
+                {data.x_rotation},
+                {data.y_rotation},
+                {data.internal_temperature_1},
+                {data.internal_temperature_2},
+                {data.external_temperature},
+                {data.iaq},
                 {data.pressure},
                 {data.humidity},
-                0,
+                {data.bvoc},
                 {data.co2},
-                {data.uva1},
-                {data.uva2});''')
+                {data.uva_1},
+                {data.uva_2},
+                {data.beta_particles},
+                {data.satellites_connected});''')
+
+                # TODO: Add {data.vertical_speed},
         except Error as err:
             raise Error(f"Error inserting values: '{err}'")
 
@@ -293,13 +366,22 @@ class SerialSimulator:
             lon=random.uniform(-3.8, -3.7),
             altitude=random.uniform(600, 750),
             course=random.uniform(0, 359),
-            speed=random.uniform(1, 10),
-            temperature=random.uniform(10, 30),
+            horizontal_speed=random.uniform(1, 10),
+            vertical_speed=random.uniform(1, 10),
+            x_rotation=random.uniform(0, 359),
+            y_rotation=random.uniform(0, 359),
+            internal_temperature_1=random.uniform(10, 30),
+            internal_temperature_2=random.uniform(10, 30),
+            external_temperature=random.uniform(10, 30),            
+            iaq=random.uniform(900, 1100),
             pressure=random.uniform(900, 1100),
             humidity=random.uniform(0, 100),
+            bvoc=random.uniform(0, 100),
             co2=random.uniform(0, 300),
-            uva1=random.randint(0, 12),
-            uva2=random.randint(0, 12))
+            uva_1=random.randint(0, 12),
+            uva_2=random.randint(0, 12),
+            beta_particles=random.randint(0, 3),
+            satellites_connected=random.randint(1, 5))
 
 if __name__ == '__main__':
     # To create virtual COM ports when simulating run:
@@ -312,7 +394,7 @@ if __name__ == '__main__':
     #     password="R2x0tuA8DhPbKE67")
     parser = argparse.ArgumentParser()
     parser.add_argument("--serialport", default="/dev/ttyREAD", help="Serial port device")
-    parser.add_argument("--baudrate", default=19600, help="Serial port baud rate")
+    parser.add_argument("--baudrate", default=9600, help="Serial port baud rate")
     parser.add_argument("--serialtimeout", default=1, help="Serial port timeout in seconds")
     parser.add_argument("--mysqlhost", default="", help="MySQL database host")
     parser.add_argument("--mysqluser", default="", help="MySQL database user name")
@@ -350,3 +432,4 @@ if __name__ == '__main__':
                 print(f"ERROR. Unable to comply: {err}")
     
     reader.read(_writerFn)
+    

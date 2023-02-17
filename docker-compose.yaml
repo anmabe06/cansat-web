@@ -9,7 +9,9 @@ services:
       - MYSQL_USER=cansat
       - MYSQL_PASSWORD=cansat23
       - MYSQL_DATABASE=cansat
-      - TZ='Europe/Madrid'
+      - TZ='Europe/Madrid
+    ports:
+      - 3306:3306
     volumes:
       - mysqldata:/var/lib/mysql
 
