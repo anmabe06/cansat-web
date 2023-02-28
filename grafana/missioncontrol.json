@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "liveNow": true,
   "panels": [
@@ -54,7 +54,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
       },
       "fieldConfig": {
         "defaults": {
@@ -63,7 +63,6 @@
             "mode": "fixed"
           },
           "mappings": [],
-          "max": 1000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -90,6 +89,9 @@
       },
       "id": 8,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -98,53 +100,50 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "textMode": "auto"
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
-          "dataset": "qagi935",
           "datasource": {
             "type": "mysql",
-            "uid": "_SlcPEoVz"
+            "uid": "P8F3B5926391869B3"
           },
-          "editorMode": "builder",
-          "format": "table",
-          "rawSql": "SELECT height FROM qagi935.cansat_stats LIMIT 50 ",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  altitude\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
-          "sql": {
-            "columns": [
+          "select": [
+            [
               {
-                "parameters": [
-                  {
-                    "name": "height",
-                    "type": "functionParameter"
-                  }
+                "params": [
+                  "altitude"
                 ],
-                "type": "function"
+                "type": "column"
               }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "cansat_stats"
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
       "title": "Altitude",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
       },
       "fieldConfig": {
         "defaults": {
@@ -152,8 +151,8 @@
             "mode": "continuous-RdYlGr"
           },
           "mappings": [],
-          "max": 20,
-          "min": 10,
+          "max": 40,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -179,6 +178,9 @@
       },
       "id": 4,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -187,48 +189,45 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "textMode": "auto"
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
-          "dataset": "qagi935",
           "datasource": {
             "type": "mysql",
-            "uid": "_SlcPEoVz"
+            "uid": "P8F3B5926391869B3"
           },
-          "editorMode": "builder",
-          "format": "table",
-          "rawSql": "SELECT external_temperature FROM qagi935.cansat_stats LIMIT 50 ",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  external_temperature\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
-          "sql": {
-            "columns": [
+          "select": [
+            [
               {
-                "parameters": [
-                  {
-                    "name": "external_temperature",
-                    "type": "functionParameter"
-                  }
+                "params": [
+                  "external_temperature"
                 ],
-                "type": "function"
+                "type": "column"
               }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "cansat_stats"
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
       "title": "External Temperature",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "datasource": {
@@ -279,7 +278,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
           "dataset": "qagi935",
@@ -368,7 +367,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
           "dataset": "qagi935",
@@ -411,7 +410,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
       },
       "fieldConfig": {
         "defaults": {
@@ -419,8 +418,7 @@
             "mode": "continuous-GrYlRd"
           },
           "mappings": [],
-          "max": 10000000,
-          "min": 65000,
+          "max": 1100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -459,41 +457,39 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
-          "dataset": "qagi935",
           "datasource": {
             "type": "mysql",
-            "uid": "_SlcPEoVz"
+            "uid": "P8F3B5926391869B3"
           },
-          "editorMode": "builder",
-          "format": "table",
-          "rawSql": "SELECT pressure FROM qagi935.cansat_stats LIMIT 50 ",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  pressure\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
-          "sql": {
-            "columns": [
+          "select": [
+            [
               {
-                "parameters": [
-                  {
-                    "name": "pressure",
-                    "type": "functionParameter"
-                  }
+                "params": [
+                  "pressure"
                 ],
-                "type": "function"
+                "type": "column"
               }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "cansat_stats"
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
       "title": "Pressure",
@@ -502,7 +498,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
       },
       "fieldConfig": {
         "defaults": {
@@ -548,51 +544,51 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
-          "dataset": "qagi935",
           "datasource": {
             "type": "mysql",
-            "uid": "_SlcPEoVz"
+            "uid": "P8F3B5926391869B3"
           },
-          "editorMode": "builder",
-          "format": "table",
-          "rawSql": "SELECT humidity FROM qagi935.cansat_stats LIMIT 50 ",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  humidity\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
-          "sql": {
-            "columns": [
+          "select": [
+            [
               {
-                "parameters": [
-                  {
-                    "name": "humidity",
-                    "type": "functionParameter"
-                  }
+                "params": [
+                  "humidity"
                 ],
-                "type": "function"
+                "type": "column"
               }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "cansat_stats"
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
       "title": "Humidity",
       "type": "gauge"
     },
     {
+      "autoZoom": true,
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
       },
+      "defaultLayer": "OpenStreetMap",
       "gridPos": {
         "h": 11,
         "w": 10,
@@ -600,21 +596,85 @@
         "y": 13
       },
       "id": 24,
-      "options": {
-        "autoPlay": true,
-        "customBackground": false,
-        "geolocate": false,
-        "loop": true,
-        "videoId": "dQw4w9WgXcQ",
-        "videoType": "youtube"
-      },
+      "lineColor": "red",
+      "maxDataPoints": 500,
+      "pointColor": "royalblue",
+      "scrollWheelZoom": false,
+      "showLayerChanger": true,
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  latitude\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  longitude\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "longitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
       "title": "Trajectory",
-      "type": "innius-video-panel"
+      "type": "pr0ps-trackmap-panel"
     },
     {
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
       },
       "fieldConfig": {
         "defaults": {
@@ -681,6 +741,9 @@
       },
       "id": 14,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -689,48 +752,45 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "textMode": "auto"
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
-          "dataset": "qagi935",
           "datasource": {
             "type": "mysql",
-            "uid": "_SlcPEoVz"
+            "uid": "P8F3B5926391869B3"
           },
-          "editorMode": "builder",
-          "format": "table",
-          "rawSql": "SELECT air_quality FROM qagi935.cansat_stats LIMIT 50 ",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  iaq\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
-          "sql": {
-            "columns": [
+          "select": [
+            [
               {
-                "parameters": [
-                  {
-                    "name": "air_quality",
-                    "type": "functionParameter"
-                  }
+                "params": [
+                  "iaq"
                 ],
-                "type": "function"
+                "type": "column"
               }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "cansat_stats"
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
       "title": "Air composition",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "datasource": {
@@ -781,7 +841,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
           "dataset": "qagi935",
@@ -868,7 +928,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "8.5.9",
       "targets": [
         {
           "dataset": "qagi935",
@@ -909,19 +969,20 @@
       "type": "gauge"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 37,
+  "refresh": "1s",
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "2022-01-26T20:43:23.000Z",
-    "to": "2022-01-26T20:43:33.000Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
+      "1s",
       "5s",
       "10s",
       "30s",
@@ -937,6 +998,6 @@
   "timezone": "",
   "title": "Live Stats",
   "uid": "5wSVx_o4z",
-  "version": 28,
+  "version": 2,
   "weekStart": ""
 }

@@ -36,10 +36,8 @@ class DataPayload:
                 internal_temperature_2: float = None, external_temperature: float = None, iaq: float = None, 
                 pressure: float = None, humidity: float = None, bvoc: float = None, co2: float = None, 
                 uva_1: float = None, uva_2: float = None, beta_particles: float = None, satellites_connected: float = None):
-        # TODO: When date is received correctly, update the following 3 lines
-        # self.date = date
-        # self.date = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        self.date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        #TODO Tiny GPS is supposed to follow NMEA data format, meaning times are UTC.
+        self.date = datetime.datetime.strptime(date, DATETIME_FORMAT)
         self.latitude = lat
         self.longitude = lon
         self.altitude = altitude
@@ -70,8 +68,9 @@ class DataPayload:
             elapsed_time = (d1-d0).seconds+(d1-d0).microseconds
             self.vertical_speed = (prev.altitude - self.altitude)/elapsed_time
             self.vertical_acceleration = None #TODO
-        if self.horizontal_speed is not None and prev.horizontal_speed is not None:
-            self.horizontal_acceleration = None #TODO
+        # if self.horizontal_speed is not None and prev.horizontal_speed is not None:
+        #     self.horizontal_acceleration = None #TODO
+        pass
 
 def parse_payload(raw_data:str, separator:str) -> DataPayload:
     if raw_data[0] != "!" or raw_data[-1] != "!":
@@ -158,8 +157,8 @@ def serialize_payload(raw_data:DataPayload, separator:str) -> str:
         f"{raw_data.internal_temperature_2}{separator}{raw_data.external_temperature}{separator}"+\
         f"{raw_data.iaq}{separator}{raw_data.pressure}{separator}"+\
         f"{raw_data.humidity}{separator}{raw_data.bvoc}{separator}"+\
-        f"{raw_data.co2}{separator}{raw_data.uva_1}{separator}{raw_data.uva_2}"+\
-        f"{raw_data.beta_particles}{separator}{raw_data.satellites_connected}{separator}!"
+        f"{raw_data.co2}{separator}{raw_data.uva_1}{separator}{raw_data.uva_2}{separator}"+\
+        f"{raw_data.beta_particles}{separator}{raw_data.satellites_connected}!"
 
 class Reader(ABC):
     def __init__(self) -> None:
@@ -198,7 +197,6 @@ class SerialReader(Reader):
             result = self._serial.read(100)
             buffer += (result.decode('utf-8'))
             buffer, payloads = self._extract_payloads(buffer)
-           # print(buffer)
             for payload in payloads:
                 callback(payload)
 
@@ -263,14 +261,13 @@ class SQLWriter(Writer):
     def _create_table(self) -> None:
         #SET @@sql_mode = sys.list_add(@@sql_mode, 'TIME_TRUNCATE_FRACTIONAL');
         self._execute_query(f'''CREATE TABLE IF NOT EXISTS {SQLWriter.table_name}(
-            time DATETIME(2),
+            time DATETIME NOT NULL,
             latitude FLOAT,
             longitude FLOAT,
             altitude FLOAT,
             course FLOAT,
             horizontal_speed FLOAT,
-            x_rotation FLOAT,
-            y_rotation FLOAT,
+            vertical_speed FLOAT,
             internal_temperature_1 FLOAT,
             internal_temperature_2 FLOAT,
             external_temperature FLOAT,
@@ -287,7 +284,7 @@ class SQLWriter(Writer):
     def write(self, data:DataPayload) -> None:
         try:
             for value_key in data.__dict__:
-                if value_key == None:
+                if value_key is None:
                     data.__dict__[value_key] = "NULL"
 
             self._execute_query(f'''INSERT into {SQLWriter.table_name} 
@@ -359,7 +356,6 @@ class SerialSimulator:
     
     def _random_payload(self) -> str:
         now = datetime.datetime.now(datetime.timezone.utc)
-        #TODO readjust
         return DataPayload(
             now.strftime("%Y-%m-%d %H:%M:%S"),
             lat=random.uniform(40.41, 40.39),
@@ -372,7 +368,7 @@ class SerialSimulator:
             y_rotation=random.uniform(0, 359),
             internal_temperature_1=random.uniform(10, 30),
             internal_temperature_2=random.uniform(10, 30),
-            external_temperature=random.uniform(10, 30),            
+            external_temperature=random.uniform(10, 30),
             iaq=random.uniform(900, 1100),
             pressure=random.uniform(900, 1100),
             humidity=random.uniform(0, 100),
