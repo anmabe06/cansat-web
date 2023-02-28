@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HPS</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/carousel.css">
+        <link rel="stylesheet" href="assets/css/pop_up.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body>
+        <div id="more-info-pop-up-container">
+            <div id="more-info-pop-up-child">
+                <h1 id="more-info-name">Name</h1>
+                <hr>
+                <h2 id="more-info-position">Position</h2>
+                <p id="more-info-description">Description</p>
+                <div id="pop-up-exit-container"><a onclick="close_more_info()" id="pop-up-exit-button">close</a></div>
+            </div>
+        </div>
+        <div id="header">
+            <div>
+                <img id="logo" src="assets/images/logo.png">
+            </div>
+            <div>
+                <a href="#" id="live-stats-link">LIVE STATS</a>
+            </div>
+        </div>
+        <div class="section dark-section" id="home-section">
+            <div>
+                <h2 class="section-title">HABITABLE PLANETARY SEARCHER</h2>
+                <h1>HPS</h1>
+                <div class="arrow">
+                    <a href="#move-to-about-arrow" id="move-to-about-arrow">
+                      <span class="bottom"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="section gold-section" id="about-section">
+            <div id="about-section-child-left">
+                <h2 class="section-title">SOBRE NOSOTROS</h2>
+                <p>Alguna vez te has preguntado qué será de la humanidad en 50 años? Habremos acabado la existencia de la raza humana para siempre? El cambio climático habrá detruido la gran parte de la vida en nuestro planeta hasta un punto en el que no haya vuelta atrás? Nuestros líderes políticos habrán tomado parte en una guerra nuclear que acabará con la vida en la tierra? ...</p>
+                <p>Hay muchas preguntas a las que no tenemos respuesta. Pero algo está claro. Dada la frágil naturaleza del ser humano, hay que buscar planetas alternativos capaces de albergas vida. Es de ahí de donde nace nuestro proyecto, HPS, un satélite del modelo CANSAT capaz de medir abundantes parámetros sobre la atmósfera y la superficie del planeta al que orbita, con la finalidad de determinar si en ese planeta podrá proliferar la sensible vida orgánica que conocemos en la Tierra.</p>
+            </div>
+            <div id="about-section-child-right">
+                <img src="./assets/images/about_icon.png">
+            </div>
+            <div id="small-device-about-footer"></div>
+        </div>
+        <div class="section dark-section " id="video-section">
+            <div>
+                <h2 class="section-title">PROJECT TRAILER</h2>
+                <iframe width="560" height="315" id="trailer" src="https://www.youtube.com/embed/xvFZjo5PgG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="section gold-section" id="team-section">
+            <div>
+                <h2 class="section-title">OUR TEAM</h2>
+            </div>
+            <div id="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-item" id="antonio">
+                        <div class="details">
+                            <h3>Antonio</h3>
+                            <div class="role-box"> Designer & Programmer</div>
+                            <p>
+                                Me llamo Antonio y soy un adolescente de 16 años que actualmente estudia el Programa del Diploma que ofrece el Bachillerato Internacional. Me apasionan las asignaturas STEM, como las matemáticas... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
+                            </p>
+                            <span class="more-info-pop-up-description">Me llamo Antonio y soy un adolescente de 16 años que actualmente estudia el Programa del Diploma que ofrece el Bachillerato Internacional. Me apasionan las asignaturas STEM, como las matemáticas, la física, la química y la informática; aunque también admiro la importancia de las ciencias humanas. Desde pequeño, como casi todos los niños, desarrollé un gran interés por el espacio y el universo, principalmente por los misterios que encierra y que han permanecido sin resolver durante siglos... y los misterios son algo que realmente disfruto resolver, ya que los rompecabezas mentales que te hacen idear soluciones poco convencionales encajan como un guante con mi personalidad. Aparte del espacio, también me importan las cosas que ocurren en nuestro planeta; me gusta mucho ayudar a otras personas que puedan estar en una situación desfavorecida, por eso me he inscrito en muchos programas de voluntariado en los que, por ejemplo, he ayudado a personas mayores con cuestiones relacionadas con la tecnología que para ellos parecen un mundo nuevo.</span>
+                            <a class="carousel-item-link-disabled" target="_blank">Portfolio</a>
+                            <a class="carousel-item-link" href="https://www.instagram.com/anmabe06/" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item" id="pablo">
+                        <div class="details">
+                            <h3>Pablo</h3>
+                            <div class="role-box"> Programmer</div>
+                            <p>
+                                Tengo 16 años. Estudio en Runnymede College Madrid y estoy en 4 de la ESO. Me gusta la informática desde que era muy pequeño y empecé a programar HTML, CSS y Javascript hace 3 años. Lo que mas me... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
+                            </p>
+                            <span class="more-info-pop-up-description">Tengo 16 años. Estudio en Runnymede College Madrid y estoy en 4 de la ESO. Me gusta la informática desde que era muy pequeño y empecé a programar HTML, CSS y Javascript hace 3 años. Lo que mas me gusta dentro de la tecnología es la ciberseguridad y trabajar en grupo con otra gente con el mismo interés. Me gusta el golf y la musica.</span>
+                            <a class="carousel-item-link" href="https://www.instagram.com/p_yacobi/" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item" id="alejandro">
+                        <div class="details">
+                            <h3>Alejandro Pallares</h3>
+                            <div class="role-box"> Circuit Designer</div>
+                            <p>
+                                . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
+                            </p>
+                            <span class="more-info-pop-up-description">...</span>
+                            <a class="carousel-item-link" href="https://www.instagram.com/el_pallar/" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item" id="lucas">
+                        <div class="details">
+                            <h3>Lucas</h3>
+                            <div class="role-box"> Aerodynamics Designer & Marketing</div>
+                            <p>
+                                Soy un estudiante de 16 años apasionado por el espacio, la tecnología y los cohetes. Actualmente estoy estudiando en el Sek El Castillo, en el programa de bachillerato internacional.
+                            </p>
+                            <a class="carousel-item-link" href="https://www.instagram.com/lucaas.gallego/" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item" id="modrono">
+                        <div class="details">
+                            <h3>Alejandro Modroño</h3>
+                            <div class="role-box"> Aerodynamics Designer & Marketing</div>
+                            <p>
+                                Nací en Madrid el 16 de enero de 2006, y actualmente estoy cursando el primer año del bachillerato internacional en el colegio SEK El Castillo. Desde pequeño he sido un gran aficionado del fútbol... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
+                            </p>
+                            <span class="more-info-pop-up-description">Nací en Madrid el 16 de enero de 2006, y actualmente estoy cursando el primer año del bachillerato internacional en el colegio SEK El Castillo. Desde pequeño he sido un gran aficionado informática, y comencé a programar con tan solo 10 años. También soy un gran aficionado del fútbol, en especial del Real Madrid, y jugué futbol sala en la Real Federación Española de Fútbol.</span>
+                            <a class="carousel-item-link" href="https://www.instagram.com/amodrono/" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item" id="ivan">
+                        <div class="details">
+                            <h3>Ivan Aldehuela</h3>    
+                            <div class="role-box"> Circuit Designer</div>               
+                            <p>
+                                Tengo 15 años, actualmente estoy estudiando en el colegio Nuestra Señora de Las Nieves un 4 de ESO de ciencias. Siempre me ha gustado todo lo relacionado con la robótica, la tecnología y la ciencia... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
+                            </p>
+                            <span class="more-info-pop-up-description">Tengo 15 años, actualmente estoy estudiando en el colegio Nuestra Señora de Las Nieves un 4 de ESO de ciencias. Siempre me ha gustado todo lo relacionado con la robótica, la tecnología y la ciencia. También me llama mucho la atención el espacio y la programación y me gustaría dedicarme a algo relacionado con eso en un futuro.</span>
+                            <a class="carousel-item-link-disabled" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section dark-section" id="footer-section">
+            <footer>
+                <div class="social">
+                    <a href="#">
+                        <i class="icon ion-social-instagram"></i>
+                    </a>
+                    <a href="#">
+                        <i class="icon ion-social-snapchat"></i>
+                    </a>
+                    <a href="#">
+                        <i class="icon ion-social-twitter"></i>
+                    </a>
+                    <a href="#">
+                        <i class="icon ion-social-facebook"></i>
+                    </a>
+                </div>
+                <p class="copyright">ESPAÑA 2023</p>
+            </footer>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#more-info-pop-up-container").hide();
+            });
+            
+            function show_more_info(element){
+                console.log(element);
+                name = element.getElementsByTagName("h3")[0].innerHTML;
+                position = element.getElementsByClassName("role-box")[0].innerHTML;
+                description = element.getElementsByClassName("more-info-pop-up-description")[0].innerHTML;
+
+                $("#more-info-pop-up-container").css("z-index", 9999);
+                $("#more-info-pop-up-container #more-info-pop-up-child #more-info-name").html(name);
+                $("#more-info-pop-up-container #more-info-pop-up-child #more-info-position").html(position);
+                $("#more-info-pop-up-container #more-info-pop-up-child #more-info-description").html(description);
+                $("#more-info-pop-up-container").fadeIn(500);
+            }
+
+            function close_more_info(){
+                $("#more-info-pop-up-container").fadeOut(500, function(){$("#more-info-pop-up-container").css("z-index", -1)});
+            }
+        </script>
+    </body>
+</html>
