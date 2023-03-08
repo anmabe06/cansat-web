@@ -22,9 +22,11 @@ USER grafana
 
 RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackmap-panel 2.1.2
 
+# TODO: COPY plugins.yaml /etc/grafana/provisioning/plugins/
 COPY datasource.yaml /etc/grafana/provisioning/datasources/
 COPY dashboards.yaml /etc/grafana/provisioning/dashboards/
-COPY missioncontrol.json /dashboards/
+COPY live_stats.json /dashboards/
+COPY time_series_data.json /dashboards/
 COPY defaults.ini /usr/share/grafana/conf/defaults.ini
 
 EXPOSE 3000

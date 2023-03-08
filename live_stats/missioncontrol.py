@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from abc import ABC, abstractmethod
+import math
 import mysql.connector
 from mysql.connector import Error
 import argparse
@@ -22,16 +23,16 @@ import time
 # https://grafana.com/docs/grafana/latest/datasources/mysql
 
 ## Payload format, if separator is |
-# !date|latitude|longitude|altitude|course|horizontal_speed|vertical_speed|x_rotation|y_rotation|internal_temperature_1|internal_temperature_2|external_temperature|iaq|pressure|humidity|bvoc|co2|uva_1|uva_2|beta_particles|satellites_connected!
+# !date|latitude|longitude|altitude|course|horizontal_speed|x_rotation|y_rotation|internal_temperature_1|internal_temperature_2|external_temperature|iaq|pressure|humidity|bvoc|co2|uva_1|uva_2|beta_particles|satellites_connected!
 # Data arrives in the form of a raw UTF-8 encoded string.
 
 #TODO work this out with the cansat code.
-PAYLOAD_REGEX = re.compile(r'!([^\|!]+\|){20}[^\|!]+!')
+PAYLOAD_REGEX = re.compile(r'!([^\|!]+\|){19}[^\|!]+!')
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 class DataPayload:
     def __init__(self, date: str, lat: float = None, lon: float = None, altitude: float = None, 
-                course: float = None, horizontal_speed: float = None, vertical_speed: float = None, 
+                course: float = None, horizontal_speed: float = None, 
                 x_rotation: float = None, y_rotation: float = None, internal_temperature_1: float = None, 
                 internal_temperature_2: float = None, external_temperature: float = None, iaq: float = None, 
                 pressure: float = None, humidity: float = None, bvoc: float = None, co2: float = None, 
@@ -43,10 +44,6 @@ class DataPayload:
         self.altitude = altitude
         self.course = course
         self.horizontal_speed = horizontal_speed
-        self.vertical_speed = vertical_speed
-        if horizontal_speed is not None and vertical_speed is not None:
-            #self.net_speed = (horizontal_speed^2)*(vertical_speed^2)    # Calculated
-            pass
         self.x_rotation = x_rotation
         self.y_rotation = y_rotation
         self.internal_temperature_1 = internal_temperature_1
@@ -63,13 +60,15 @@ class DataPayload:
         self.satellites_connected = satellites_connected
     
     def compute_synthetics(self, prev) -> None:
-        if self.altitude is not None and prev.altitude is not None and self.date != prev.date:
+        if  self.date != prev.date:
             d1, d0 = datetime.datetime.strptime(self.date, DATETIME_FORMAT), datetime.datetime.strptime(prev.date, DATETIME_FORMAT)
             elapsed_time = (d1-d0).seconds+(d1-d0).microseconds
-            self.vertical_speed = (prev.altitude - self.altitude)/elapsed_time
-            self.vertical_acceleration = None #TODO
-        # if self.horizontal_speed is not None and prev.horizontal_speed is not None:
-        #     self.horizontal_acceleration = None #TODO
+
+        if self.altitude is not None and prev.altitude is not None:
+            self.vertical_speed = (self.altitude - prev.altitude)/elapsed_time
+        
+        if prev.vertical_speed is not None:
+            self.vertical_acceleration = (self.vertical_speed - prev.vertical_speed)/elapsed_time
         pass
 
 def parse_payload(raw_data:str, separator:str) -> DataPayload:
@@ -89,35 +88,33 @@ def parse_payload(raw_data:str, separator:str) -> DataPayload:
         data.course = float(parts[4])
     if parts[5] != "" and parts[5] != "-":
         data.horizontal_speed = float(parts[5])
-    if parts[6] != "" and parts[6] != "-":
-        data.vertical_speed = float(parts[6])
-    if parts[7] != "" and parts[7] != "-":
+    if parts[6] != "" and parts[7] != "-":
         data.x_rotation = float(parts[7])
-    if parts[8] != "" and parts[8] != "-":
+    if parts[7] != "" and parts[8] != "-":
         data.y_rotation = float(parts[8])
-    if parts[9] != "" and parts[9] != "-":
+    if parts[8] != "" and parts[9] != "-":
         data.internal_temperature_1 = float(parts[9])
-    if parts[10] != "" and parts[10] != "-":
+    if parts[9] != "" and parts[10] != "-":
         data.internal_temperature_2 = float(parts[10])
-    if parts[11] != "" and parts[11] != "-":
+    if parts[10] != "" and parts[11] != "-":
         data.external_temperature = float(parts[11])
-    if parts[12] != "" and parts[12] != "-":
+    if parts[11] != "" and parts[12] != "-":
         data.iaq = float(parts[12])
-    if parts[13] != "" and parts[13] != "-":
+    if parts[12] != "" and parts[13] != "-":
         data.pressure = float(parts[13])
-    if parts[14] != "" and parts[14] != "-":
+    if parts[13] != "" and parts[14] != "-":
         data.humidity = float(parts[14])
-    if parts[15] != "" and parts[15] != "-":
+    if parts[14] != "" and parts[15] != "-":
         data.bvoc = float(parts[15])
-    if parts[16] != "" and parts[16] != "-":
+    if parts[15] != "" and parts[16] != "-":
         data.co2 = float(parts[16])
-    if parts[17] != "" and parts[17] != "-":
+    if parts[16] != "" and parts[17] != "-":
         data.uva_1 = float(parts[17])
-    if parts[18] != "" and parts[18] != "-":
+    if parts[17] != "" and parts[18] != "-":
         data.uva_2 = float(parts[18])
-    if parts[19] != "" and parts[19] != "-":
+    if parts[18] != "" and parts[19] != "-":
         data.beta_particles = float(parts[19])
-    if parts[20] != "" and parts[20] != "-":
+    if parts[19] != "" and parts[20] != "-":
         data.satellites_connected = float(parts[20])
     
     return data
@@ -184,6 +181,7 @@ class SerialReader(Reader):
             start, end = match.span()[0], match.span()[1]
             new_payload = parse_payload(current_str[start:end], "|")
             if self._previous_payload is not None:
+                print("Computing synthetics")
                 new_payload.compute_synthetics(self._previous_payload)
             self._previous_payload = new_payload
             ret.append(new_payload)
@@ -266,8 +264,12 @@ class SQLWriter(Writer):
             longitude FLOAT,
             altitude FLOAT,
             course FLOAT,
+            net_velocity FLOAT,
+            acceleration FLOAT,
             horizontal_speed FLOAT,
             vertical_speed FLOAT,
+            x_rotation FLOAT,
+            y_rotation FLOAT,
             internal_temperature_1 FLOAT,
             internal_temperature_2 FLOAT,
             external_temperature FLOAT,
@@ -287,15 +289,21 @@ class SQLWriter(Writer):
                 if value_key is None:
                     data.__dict__[value_key] = "NULL"
 
+            temporary_acceleration = data.acceleration if hasattr(data, "acceleration") else 0
+            temporary_net_velocity = data.net_velocity if hasattr(data, "net_velocity") else 0
+
             self._execute_query(f'''INSERT into {SQLWriter.table_name} 
-                (time, latitude, longitude, altitude, course, horizontal_speed, x_rotation, y_rotation, internal_temperature_1, internal_temperature_2, external_temperature, iaq, pressure, humidity, bvoc, co2, uva_1, uva_2, beta_particles, satellites_connected) 
+                (time, latitude, longitude, altitude, course, acceleration, net_velocity, horizontal_speed, vertical_speed, x_rotation, y_rotation, internal_temperature_1, internal_temperature_2, external_temperature, iaq, pressure, humidity, bvoc, co2, uva_1, uva_2, beta_particles, satellites_connected) 
                 VALUES(
                 '{data.date}',
                 {data.latitude},
                 {data.longitude},
                 {data.altitude},
                 {data.course},
+                {temporary_acceleration},
+                {temporary_net_velocity},
                 {data.horizontal_speed},
+                {data.vertical_speed},
                 {data.x_rotation},
                 {data.y_rotation},
                 {data.internal_temperature_1},
