@@ -14,7 +14,9 @@ class DataPayload:
         self.longitude = lon
         self.altitude = altitude
         self.course = course
+        self.vertical_acceleration = 0
         self.horizontal_speed = horizontal_speed
+        self.vertical_speed = 0
         self.x_rotation = x_rotation
         self.y_rotation = y_rotation
         self.internal_temperature_1 = internal_temperature_1

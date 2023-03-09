@@ -1,5 +1,5 @@
-from live_stats.GlobalVars import GlobalVars
-from live_stats.DataPayload import DataPayload
+from GlobalVars import GlobalVars
+from DataPayload import DataPayload
 from abc import ABC, abstractmethod
 from abc import ABC, abstractmethod
 from collections.abc import Callable

@@ -2,6 +2,7 @@
 from GlobalVars import GlobalVars
 from DataPayload import DataPayload
 from Writers import FileWriter, ConsoleWriter, SQLWriter, GoogleEarthWriter
+from LaunchSimulator import LaunchSimulator
 from Readers import SerialReader
 from mysql.connector import Error
 import argparse
@@ -24,44 +25,38 @@ if __name__ == '__main__':
     # Use /tmp/serialRead for the reader, /tmp/serialWrite for the simulator
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--serialport", default="/dev/ttyREAD", help="Serial port device")
-    parser.add_argument("--baudrate", default=9600, help="Serial port baud rate")
-    parser.add_argument("--serialtimeout", default=1, help="Serial port timeout in seconds")
+    parser.add_argument("--serialport", default="/dev/ttyREAD", help="Serial port device. Defaults to /dev/ttyREAD")
+    parser.add_argument("--baudrate", default=9600, help="Serial port baud rate. Defaults to 9600")
+    parser.add_argument("--serialtimeout", default=1, help="Serial port timeout in seconds. Defaults to 1")
     parser.add_argument("--mysqlhost", default="", help="MySQL database host")
     parser.add_argument("--mysqluser", default="", help="MySQL database user name")
     parser.add_argument("--mysqlpassword", default="", help="MySQL database password")
     parser.add_argument("--mysqldatabase", default="", help="MySQL database name")
-    parser.add_argument("--mysqldrop", default=False, action='store_true', help="MySQL automatic table drop on start")
+    parser.add_argument("--mysqldrop", default=False, action='store_true', help="MySQL automatic table drop on start. Defaults to false")
     parser.add_argument("--outfile", help="File to write CSV output")
-    parser.add_argument("--console", action="store_true", default=False, help="Console output")
+    parser.add_argument("--console", action="store_true", default=False, help="Console output. Defaults to False")
     parser.add_argument("--googleearthfile", default="", help="Google Earth Pro KML file name")
-    #parser.add_argument("--simulate", default="", help="Simulate input through a writable serial port")
+    parser.add_argument("--simulate", default="", help="Simulate input through a writable serial port")
+    parser.add_argument("--simulateddataamount", default="100", help="The number of simulated rows to generate. Defaults to 100")
+    parser.add_argument("--simulateddelay", default="1000", help="Delay in miliseconds between simulated data. Defaults to 1000")
     args = parser.parse_args()
 
-    reader = SerialReader(args.serialport, args.baudrate, args.serialtimeout)
     writers = []
 
-    if args.mysqlhost != "" and args.mysqluser != "" and args.mysqlpassword != "" and args.mysqldatabase != "":
-        writers.append(SQLWriter(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.mysqldrop))
+    if args.simulate != "":
+        simulator = LaunchSimulator(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.simulateddataamount, args.simulateddelay, args.mysqldrop)
+        # thread = Thread(target=simulator.simulate_data)
+        # thread.start()
 
-    if args.console:
-        writers.append(ConsoleWriter())
+    else:
+        reader = SerialReader(args.serialport, args.baudrate, args.serialtimeout)
 
-    if args.googleearthfile != "":
-        writers.append(GoogleEarthWriter(args.googleearthfile))
+        if args.mysqlhost != "" and args.mysqluser != "" and args.mysqlpassword != "" and args.mysqldatabase != "":
+            writers.append(SQLWriter(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.mysqldrop))
 
-    # if args.simulate != "":
-    #     simulator = SerialSimulator(args.simulate, args.baudrate, args.serialtimeout)
-    #     thread = Thread(target=simulator.write_data)
-    #     thread.start()
-    #
-    #
-    # def _writerFn(data: DataPayload) -> None:
-    #     for writer in writers:
-    #         try:
-    #             writer.write(data)
-    #         except Error as err:
-    #             print(f"ERROR. Unable to comply: {err}")
-    #
-    # reader.read(_writerFn)
+        if args.console:
+            writers.append(ConsoleWriter())
+
+        if args.googleearthfile != "":
+            writers.append(GoogleEarthWriter(args.googleearthfile))
     
