@@ -21,6 +21,7 @@ RUN mkdir -p "$GF_PATHS_PLUGINS" && \
 USER grafana
 
 RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install pr0ps-trackmap-panel 2.1.2
+RUN grafana-cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install innius-video-panel 1.0.5
 
 # TODO: COPY plugins.yaml /etc/grafana/provisioning/plugins/
 COPY datasource.yaml /etc/grafana/provisioning/datasources/
