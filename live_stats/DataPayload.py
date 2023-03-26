@@ -1,5 +1,6 @@
 import time
 import datetime
+from datetime import datetime, timezone
 from GlobalVars import GlobalVars
 
 class DataPayload:
@@ -9,7 +10,9 @@ class DataPayload:
                 internal_temperature_2: float = None, external_temperature: float = None, iaq: float = None, 
                 pressure: float = None, humidity: float = None, bvoc: float = None, co2: float = None, 
                 uva_1: float = None, uva_2: float = None, beta_particles: float = None, satellites_connected: float = None):
-        self.date = date
+        #self.date = date
+        #Currently ignoring time
+        self.date = str(datetime.now(timezone.utc))[:-6]
         self.latitude = lat
         self.longitude = lon
         self.altitude = altitude
@@ -34,7 +37,7 @@ class DataPayload:
     
     def compute_synthetics(self, prev) -> None:
         if  self.date != prev.date:
-            d1, d0 = datetime.datetime.strptime(self.date, GlobalVars.DATETIME_FORMAT), datetime.datetime.strptime(prev.date, GlobalVars.DATETIME_FORMAT)
+            d1, d0 = datetime.strptime(self.date, GlobalVars.DATETIME_FORMAT), datetime.strptime(prev.date, GlobalVars.DATETIME_FORMAT)
             elapsed_time = (d1-d0).seconds+(d1-d0).microseconds
 
         if self.altitude is not None and prev.altitude is not None:

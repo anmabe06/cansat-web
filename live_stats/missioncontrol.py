@@ -3,6 +3,7 @@ from GlobalVars import GlobalVars
 from DataPayload import DataPayload
 from Writers import FileWriter, ConsoleWriter, SQLWriter, GoogleEarthWriter
 from LaunchSimulator import LaunchSimulator
+from Launch import Launch
 from Readers import SerialReader
 from mysql.connector import Error
 import argparse
@@ -15,7 +16,7 @@ from threading import Thread
 # https://grafana.com/docs/grafana/latest/datasources/mysql
 
 ## Payload format, if separator is |
-# !date|latitude|longitude|altitude|course|horizontal_speed|x_rotation|y_rotation|internal_temperature_1|internal_temperature_2|external_temperature|iaq|pressure|humidity|bvoc|co2|uva_1|uva_2|beta_particles|satellites_connected!
+# !date|latitude|longitude|altitude|course|horizontal_speed|x_rotation|y_rotation|internal_temperature_1|external_temperature|iaq|pressure|humidity|bvoc|co2|uva_1|uva_2|beta_particles|satellites_connected!
 # Data arrives in the form of a raw UTF-8 encoded string.
 
 
@@ -42,21 +43,23 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     writers = []
-
+    
     if args.simulate != "":
         simulator = LaunchSimulator(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.simulateddataamount, args.simulateddelay, args.mysqldrop)
         # thread = Thread(target=simulator.simulate_data)
         # thread.start()
 
     else:
-        reader = SerialReader(args.serialport, args.baudrate, args.serialtimeout)
+        launch = Launch(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.mysqldrop, args.serialport, args.baudrate, args.serialtimeout)
+        launch.start()
+        
 
-        if args.mysqlhost != "" and args.mysqluser != "" and args.mysqlpassword != "" and args.mysqldatabase != "":
-            writers.append(SQLWriter(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.mysqldrop))
+        # if args.mysqlhost != "" and args.mysqluser != "" and args.mysqlpassword != "" and args.mysqldatabase != "":
+        #     writers.append(SQLWriter(args.mysqlhost, args.mysqluser, args.mysqlpassword, args.mysqldatabase, args.mysqldrop))
 
-        if args.console:
-            writers.append(ConsoleWriter())
+        # if args.console:
+        #     writers.append(ConsoleWriter())
 
-        if args.googleearthfile != "":
-            writers.append(GoogleEarthWriter(args.googleearthfile))
+        # if args.googleearthfile != "":
+        #     writers.append(GoogleEarthWriter(args.googleearthfile))
     

@@ -3,7 +3,8 @@ from DataPayload import DataPayload
 from abc import ABC, abstractmethod
 import mysql.connector
 from mysql.connector import Error
-from googleearthplot.googleearthplot import googleearthplot
+import math
+#from googleearthplot.googleearthplot import googleearthplot
 
 class Writer(ABC):
     def __init__(self) -> None:
@@ -118,9 +119,21 @@ class SQLWriter(Writer):
 
     def write(self, data:DataPayload) -> None:
         try:
-            for value_key in data.__dict__:
-                if value_key is None:
-                    data.__dict__[value_key] = "NULL"
+            for idx in range(0, len(data.__dict__.keys())):
+                key = list(data.__dict__.keys())[idx]
+                value = list(data.__dict__.values())[idx]
+
+                if value is None:
+                    data.__dict__[key] = "NULL"
+                
+                if value == "NAN" or value == "nan":
+                    data.__dict__[key] = "NULL"
+
+                if isinstance(value, float):
+                    if math.isnan(value):
+                        data.__dict__[key] = "NULL"
+                    
+            print(data.__dict__)
 
             temporary_acceleration = data.acceleration if hasattr(data, "acceleration") else 0
             temporary_net_velocity = data.net_velocity if hasattr(data, "net_velocity") else 0
