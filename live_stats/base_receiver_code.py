@@ -6,7 +6,7 @@ serialInst = serial.Serial()
 portsList = []
 
 for onePort in ports:
-    portsList.append(str(onePort))
+    #portsList.append(str(onePort))
     print(str(onePort))
 
 val = input("Select Port: COM")

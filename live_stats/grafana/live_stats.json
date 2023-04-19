@@ -32,58 +32,72 @@
         "type": "mysql",
         "uid": "P8F3B5926391869B3"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 10,
+        "h": 5,
         "w": 5,
         "x": 0,
         "y": 0
       },
-      "id": 36,
+      "id": 42,
       "options": {
-        "hudBgColor": "#22252b",
-        "pointColor": "red",
-        "pointSize": 5,
-        "series": {
-          "x": "latitude",
-          "y": "altitude",
-          "z": "longitude"
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "seriesMapping": "manual",
-        "themeColor": "#ffffff"
+        "textMode": "auto"
       },
+      "pluginVersion": "8.5.9",
       "targets": [
         {
           "datasource": {
             "type": "mysql",
             "uid": "P8F3B5926391869B3"
           },
-          "format": "table",
+          "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  latitude,\n  longitude,\n  altitude\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "rawSql": "SELECT\n  time AS \"time\",\n  etl\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "latitude"
-                ],
-                "type": "column"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "longitude"
-                ],
-                "type": "column"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "altitude"
+                  "etl"
                 ],
                 "type": "column"
               }
@@ -101,8 +115,8 @@
           ]
         }
       ],
-      "title": "Trajectory",
-      "type": "grafana-xyzchart-panel"
+      "title": "Estimated Time Left for Landing",
+      "type": "stat"
     },
     {
       "autoZoom": true,
@@ -112,14 +126,14 @@
       },
       "defaultLayer": "OpenStreetMap",
       "gridPos": {
-        "h": 10,
+        "h": 8,
         "w": 5,
         "x": 5,
         "y": 0
       },
       "id": 24,
       "lineColor": "red",
-      "maxDataPoints": 500,
+      "maxDataPoints": 1000,
       "pointColor": "royalblue",
       "scrollWheelZoom": false,
       "showLayerChanger": true,
@@ -293,8 +307,6 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 12,
-          "min": 8,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -316,6 +328,105 @@
         "h": 6,
         "w": 4,
         "x": 14,
+        "y": 0
+      },
+      "id": 26,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.5.9",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  net_velocity\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "net_velocity"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Net Velocity",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P8F3B5926391869B3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 12,
+          "min": 8,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 9
+              },
+              {
+                "color": "green",
+                "value": 10
+              },
+              {
+                "color": "yellow",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              }
+            ]
+          },
+          "unit": "velocityms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 18,
         "y": 0
       },
       "id": 10,
@@ -392,91 +503,8 @@
                 "value": 80
               }
             ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 3,
-        "x": 18,
-        "y": 0
-      },
-      "id": 26,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "8.5.9",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P8F3B5926391869B3"
           },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  net_velocity\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "net_velocity"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cansat_data",
-          "timeColumn": "time",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Net Velocity",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P8F3B5926391869B3"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          "unit": "accMS2"
         },
         "overrides": []
       },
@@ -510,13 +538,13 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  acceleration\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "rawSql": "SELECT\n  time AS \"time\",\n  vertical_acceleration\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "acceleration"
+                  "vertical_acceleration"
                 ],
                 "type": "column"
               }
@@ -534,8 +562,85 @@
           ]
         }
       ],
-      "title": "Acceleration",
+      "title": "Vertical Acceleration",
       "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P8F3B5926391869B3"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 5,
+        "x": 0,
+        "y": 5
+      },
+      "id": 36,
+      "options": {
+        "hudBgColor": "#22252b",
+        "pointColor": "red",
+        "pointSize": 5,
+        "series": {
+          "x": "latitude",
+          "y": "altitude",
+          "z": "longitude"
+        },
+        "seriesMapping": "manual",
+        "themeColor": "#ffffff"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  latitude,\n  longitude,\n  altitude\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "latitude"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "longitude"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "altitude"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Trajectory",
+      "type": "grafana-xyzchart-panel"
     },
     {
       "datasource": {
@@ -560,7 +665,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "celsius"
         },
         "overrides": []
       },
@@ -847,25 +953,96 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "_SlcPEoVz"
+        "uid": "P8F3B5926391869B3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
       "gridPos": {
-        "h": 13,
-        "w": 10,
-        "x": 0,
-        "y": 10
+        "h": 6,
+        "w": 5,
+        "x": 5,
+        "y": 8
       },
-      "id": 22,
+      "id": 40,
       "options": {
-        "autoPlay": true,
-        "customBackground": false,
-        "geolocate": false,
-        "loop": false,
-        "videoId": "none",
-        "videoType": "youtube"
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "view": {
+          "id": "zero",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 1
+        }
       },
-      "title": "Live Video",
-      "type": "innius-video-panel"
+      "pluginVersion": "8.5.9",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  etl\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "etl"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Estimated Langin Coordinates",
+      "type": "geomap"
     },
     {
       "datasource": {
@@ -880,7 +1057,6 @@
           "custom": {
             "axisLabel": "",
             "axisPlacement": "auto",
-            "axisSoftMax": 10,
             "axisSoftMin": 0,
             "barAlignment": 0,
             "drawStyle": "line",
@@ -898,7 +1074,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -908,6 +1084,7 @@
             }
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -926,8 +1103,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 14,
+        "h": 5,
+        "w": 8,
         "x": 10,
         "y": 11
       },
@@ -986,268 +1163,6 @@
         "type": "mysql",
         "uid": "P8F3B5926391869B3"
       },
-      "description": "Write description",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 2,
-        "x": 10,
-        "y": 15
-      },
-      "id": 30,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.5.9",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P8F3B5926391869B3"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  iaq\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "iaq"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cansat_data",
-          "timeColumn": "time",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "IAQ",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P8F3B5926391869B3"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "max": 1100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "pressurepa"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 12,
-        "y": 15
-      },
-      "id": 16,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.5.9",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P8F3B5926391869B3"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  pressure\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "pressure"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cansat_data",
-          "timeColumn": "time",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Pressure",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P8F3B5926391869B3"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "congm3"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 15,
-        "y": 15
-      },
-      "id": 34,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.5.9",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P8F3B5926391869B3"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  co2\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "co2"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "cansat_data",
-          "timeColumn": "time",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "CO2",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P8F3B5926391869B3"
-      },
       "description": "Add description",
       "fieldConfig": {
         "defaults": {
@@ -1275,7 +1190,7 @@
         "h": 5,
         "w": 3,
         "x": 18,
-        "y": 15
+        "y": 11
       },
       "id": 32,
       "options": {
@@ -1364,7 +1279,7 @@
         "h": 5,
         "w": 3,
         "x": 21,
-        "y": 15
+        "y": 11
       },
       "id": 20,
       "options": {
@@ -1422,16 +1337,125 @@
     {
       "datasource": {
         "type": "mysql",
+        "uid": "_SlcPEoVz"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 10,
+        "x": 0,
+        "y": 14
+      },
+      "id": 22,
+      "options": {
+        "autoPlay": true,
+        "customBackground": false,
+        "geolocate": false,
+        "loop": false,
+        "videoId": "none",
+        "videoType": "youtube"
+      },
+      "title": "Live Video",
+      "type": "innius-video-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
         "uid": "P8F3B5926391869B3"
       },
+      "description": "Write description",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 20,
-          "min": 5,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 10,
+        "y": 16
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.5.9",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  iaq\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "iaq"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "IAQ",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P8F3B5926391869B3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 1100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1445,17 +1469,197 @@
               }
             ]
           },
-          "unit": "velocityms"
+          "unit": "pressurepa"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 3,
-        "x": 0,
-        "y": 23
+        "x": 13,
+        "y": 16
       },
-      "id": 12,
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.5.9",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  pressure\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "pressure"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Pressure",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P8F3B5926391869B3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "congm3"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 16,
+        "y": 16
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.5.9",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  co2\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "co2"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "CO2",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P8F3B5926391869B3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 180,
+          "min": -180,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "dark-green",
+                "value": -45
+              },
+              {
+                "color": "green",
+                "value": 45
+              }
+            ]
+          },
+          "unit": "degree"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 19,
+        "y": 16
+      },
+      "id": 38,
       "options": {
         "orientation": "auto",
         "reduceOptions": {
@@ -1479,13 +1683,46 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  horizontal_speed\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "rawSql": "SELECT\n  time AS \"time\",\n  x_rotation\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "horizontal_speed"
+                  "x_rotation"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "cansat_data",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P8F3B5926391869B3"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  y_rotation\nFROM cansat_data\nWHERE\n  $__timeFilter(time)\nORDER BY time",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "y_rotation"
                 ],
                 "type": "column"
               }
@@ -1503,7 +1740,7 @@
           ]
         }
       ],
-      "title": "Horizontal Speed",
+      "title": "Rotation",
       "type": "gauge"
     }
   ],
@@ -1515,7 +1752,7 @@
     "list": []
   },
   "time": {
-    "from": "now-30d",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -1536,6 +1773,6 @@
   "timezone": "",
   "title": "Live Stats",
   "uid": "5wSVx_o4z",
-  "version": 9,
+  "version": 15,
   "weekStart": ""
 }

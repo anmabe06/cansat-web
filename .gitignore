@@ -28,6 +28,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 *test_data_local/
+*videos/
 MANIFEST
 
 # PyInstaller

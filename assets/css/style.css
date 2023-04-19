@@ -112,9 +112,10 @@ body {
 #home-section {
     height: 100vh;
     padding: 0em;
-    background-image: url("../images/home_background.png");
+    background-image: url("../images/home_background_artistic.jpg");
     background-size: cover;
     background-repeat: no-repeat;
+    background-position: center;
 }
 
 #home-section h1 {

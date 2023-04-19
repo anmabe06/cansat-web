@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 import mysql.connector
 from mysql.connector import Error
 import math
-#from googleearthplot.googleearthplot import googleearthplot
 
 class Writer(ABC):
     def __init__(self) -> None:
@@ -94,12 +93,15 @@ class SQLWriter(Writer):
         #SET @@sql_mode = sys.list_add(@@sql_mode, 'TIME_TRUNCATE_FRACTIONAL');
         self._execute_query(f'''CREATE TABLE IF NOT EXISTS {SQLWriter.table_name}(
             time DATETIME NOT NULL,
+            etl FLOAT,
             latitude FLOAT,
             longitude FLOAT,
             altitude FLOAT,
+            et_latitude FLOAT,
+            et_longitude FLOAT,
             course FLOAT,
             net_velocity FLOAT,
-            acceleration FLOAT,
+            vertical_acceleration FLOAT,
             horizontal_speed FLOAT,
             vertical_speed FLOAT,
             x_rotation FLOAT,
@@ -132,24 +134,32 @@ class SQLWriter(Writer):
                 if isinstance(value, float):
                     if math.isnan(value):
                         data.__dict__[key] = "NULL"
-                    
-            print(data.__dict__)
+            
 
-            temporary_acceleration = data.acceleration if hasattr(data, "acceleration") else 0
+            temporary_vertical_acceleration = data.vertical_acceleration if hasattr(data, "vertical_acceleration") else 0
+            temporary_vertical_speed = data.vertical_speed if hasattr(data, "vertical_speed") else 0
             temporary_net_velocity = data.net_velocity if hasattr(data, "net_velocity") else 0
+            temporary_elt = data.etl if hasattr(data, "etl") else 0
+            temporary_et_latitude = data.etl if hasattr(data, "et_latitude") else 0
+            temporary_et_longitude = data.etl if hasattr(data, "et_longitude") else 0
+
+            print(f"\033[94m{data.__dict__}\033[0m\n")
 
             self._execute_query(f'''INSERT into {SQLWriter.table_name} 
-                (time, latitude, longitude, altitude, course, acceleration, net_velocity, horizontal_speed, vertical_speed, x_rotation, y_rotation, internal_temperature_1, internal_temperature_2, external_temperature, iaq, pressure, humidity, bvoc, co2, uva_1, uva_2, beta_particles, satellites_connected) 
+                (time, etl, latitude, longitude, altitude, et_latitude, et_longitude, course, net_velocity, vertical_acceleration, horizontal_speed, vertical_speed, x_rotation, y_rotation, internal_temperature_1, internal_temperature_2, external_temperature, iaq, pressure, humidity, bvoc, co2, uva_1, uva_2, beta_particles, satellites_connected) 
                 VALUES(
                 '{data.date}',
+                {temporary_elt},
                 {data.latitude},
                 {data.longitude},
                 {data.altitude},
-                {data.course},
-                {temporary_acceleration},
+                {temporary_et_latitude},
+                {temporary_et_longitude},
+                {data.course[0]},
                 {temporary_net_velocity},
+                {temporary_vertical_acceleration},
                 {data.horizontal_speed},
-                {data.vertical_speed},
+                {temporary_vertical_speed},
                 {data.x_rotation},
                 {data.y_rotation},
                 {data.internal_temperature_1},
@@ -168,30 +178,3 @@ class SQLWriter(Writer):
                 # TODO: Add {data.vertical_speed},
         except Error as err:
             raise Error(f"Error inserting values: '{err}'")
-
-class GoogleEarthWriter(Writer):
-    def __init__(self, filename:str) -> None:
-        super().__init__()
-        self._filename = filename
-        self._latitudes = []
-        self._longitudes = []
-        self._altitudes = []
-
-    def write(self, data:DataPayload) -> None:
-        self._latitudes.append(data.latitude)
-        self._longitudes.append(data.longitude)
-        self._altitudes.append(data.altitude)
-        # For this to display right it needs the following changes in the library:
-        # Within PlotLineChart:
-        # ls.style.polystyle.outline = 1 and
-        # ls.style.polystyle.fill = 0
-        # ls.altitudemode = simplekml.AltitudeMode.absolute
-        gep = googleearthplot()
-        gep.PlotLineChart(
-            latList = self._latitudes,
-            lonList = self._longitudes,
-            heightList = self._altitudes,
-            name = "Trajectory",
-            color = "cyan",
-            width = 3)
-        gep.GenerateKMLFile(filepath = self._filename)

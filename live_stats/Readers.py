@@ -41,7 +41,7 @@ class SerialReader(Reader):
         if parts[3] != "" and parts[3] != "-":
             data.altitude = float(parts[3])
         if parts[4] != "" and parts[4] != "-":
-            data.course = float(re.findall("\d+\.\d+", parts[4])[0])
+            data.course = [float(re.findall("\d+\.\d+", parts[4])[0]), re.findall("[a-zA-Z]+", parts[4])[0]]
         if parts[5] != "" and parts[5] != "-":
             data.horizontal_speed = float(parts[5])
         if parts[6] != "" and parts[6] != "-":

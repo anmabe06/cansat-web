@@ -12,10 +12,42 @@
         <link rel="stylesheet" href="assets/css/style.css">
         <link rel="stylesheet" href="assets/css/carousel.css">
         <link rel="stylesheet" href="assets/css/pop_up.css">
+        <link rel="stylesheet" href="assets/css/chatbot.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
     <body>
+        <div id="chatbot-open-container">
+            <i class="material-icons" id="open-chat-button">chat</i>
+            <i class="material-icons" id="close-chat-button" style="display: none">close</i>
+        </div>
+        <div id="chatbot-container" style="display: none">
+            <div id="chatbot-interface">
+                <div id="chatbot-header">
+                    <p>Want to know something? - Let's chat</p>
+                </div>
+                <div id="chatbot-chat">
+                    <div class="chatbot-messages chatbot-received-messages">
+                        <p>If you want to see the format of the message, type <b>--format</b>. If you want to see the list of available parameter, type <b>--params</b></p>
+                    </div>
+                    <div class="chatbot-messages chatbot-received-messages">
+                        <p>I am here to tell you any flight parameter recorded at any second of flight of our CanSat</p>
+                    </div>
+                    <div class="chatbot-messages chatbot-received-messages">
+                        <p>Hello! I am <b>Mike</b>, <b>HPS's</b> chatbot</p>
+                    </div>
+                </div>
+                <div id="chatbot-footer">
+                    <div id="chatbot-input-container">
+                        <input type="text" id="chatbot-input" name="chatbot-input" placeholder="Type a command here...">
+                    </div>
+                    <div id="chatbot-new-message-send-button">
+                        <i class="material-icons" id="send-icon">send</i>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="more-info-pop-up-container">
             <div id="more-info-pop-up-child">
                 <h1 id="more-info-name">Name</h1>
@@ -58,7 +90,7 @@
         <div class="section dark-section " id="video-section">
             <div>
                 <h2 class="section-title">PROJECT TRAILER</h2>
-                <iframe width="560" height="315" id="trailer" src="https://www.youtube.com/embed/xvFZjo5PgG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/0BYNd2zZJCY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
         </div>
         <div class="section gold-section" id="team-section">
@@ -70,12 +102,12 @@
                     <div class="carousel-item" id="antonio">
                         <div class="details">
                             <h3>Antonio</h3>
-                            <div class="role-box"> Designer & Programmer</div>
+                            <div class="role-box"> Software Designer & Programmer</div>
                             <p>
                                 Me llamo Antonio y soy un adolescente de 16 años que actualmente estudia el Programa del Diploma que ofrece el Bachillerato Internacional. Me apasionan las asignaturas STEM, como las matemáticas... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
                             </p>
                             <span class="more-info-pop-up-description">Me llamo Antonio y soy un adolescente de 16 años que actualmente estudia el Programa del Diploma que ofrece el Bachillerato Internacional. Me apasionan las asignaturas STEM, como las matemáticas, la física, la química y la informática; aunque también admiro la importancia de las ciencias humanas. Desde pequeño, como casi todos los niños, desarrollé un gran interés por el espacio y el universo, principalmente por los misterios que encierra y que han permanecido sin resolver durante siglos... y los misterios son algo que realmente disfruto resolver, ya que los rompecabezas mentales que te hacen idear soluciones poco convencionales encajan como un guante con mi personalidad. Aparte del espacio, también me importan las cosas que ocurren en nuestro planeta; me gusta mucho ayudar a otras personas que puedan estar en una situación desfavorecida, por eso me he inscrito en muchos programas de voluntariado en los que, por ejemplo, he ayudado a personas mayores con cuestiones relacionadas con la tecnología que para ellos parecen un mundo nuevo.</span>
-                            <a class="carousel-item-link-disabled" target="_blank">Portfolio</a>
+                            <a class="carousel-item-link" href="https://anmabe.es" target="_blank">Portfolio</a>
                             <a class="carousel-item-link" href="https://www.instagram.com/anmabe06/" target="_blank">Instagram</a>
                         </div>
                     </div>
@@ -93,11 +125,11 @@
                     <div class="carousel-item" id="alejandro">
                         <div class="details">
                             <h3>Alejandro Pallares</h3>
-                            <div class="role-box"> Circuit Designer</div>
+                            <div class="role-box"> Software and Hardware Designer</div>
                             <p>
-                                . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
+                                Tengo 15 años y actualmente estoy cursando 4 ESO en el colegio Nuestra Señora de las Nieves en Madrid. Me apasionan las asignaturas STEM y desde pequeño me ha interesado todo lo relacionado con los... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
                             </p>
-                            <span class="more-info-pop-up-description">...</span>
+                            <span class="more-info-pop-up-description">Tengo 15 años y actualmente estoy cursando 4 ESO en el colegio Nuestra Señora de las Nieves en Madrid. Me apasionan las asignaturas STEM y desde pequeño me ha interesado todo lo relacionado con los cohetes y el diseño aeroespacial. Una de mis primeras aproximaciones a este mundo fue el diseño y construcción de un cohete se agua que me ayudó a entender los principios básicos de la aerodinámica. También me interesa el. Ampo de la robótica y he participado durante 4 años en la FLL habiendo conseguido el primer puesto tanto en el proyecto científico como en el robot.</span>
                             <a class="carousel-item-link" href="https://www.instagram.com/el_pallar/" target="_blank">Instagram</a>
                         </div>
                     </div>
@@ -125,7 +157,7 @@
                     <div class="carousel-item" id="ivan">
                         <div class="details">
                             <h3>Ivan Aldehuela</h3>    
-                            <div class="role-box"> Circuit Designer</div>               
+                            <div class="role-box"> Hardware Designer</div>               
                             <p>
                                 Tengo 15 años, actualmente estoy estudiando en el colegio Nuestra Señora de Las Nieves un 4 de ESO de ciencias. Siempre me ha gustado todo lo relacionado con la robótica, la tecnología y la ciencia... <span class="more-info-link"><button onclick="show_more_info(this.parentElement.parentElement.parentElement)">more info</button></span>
                             </p>
@@ -139,22 +171,22 @@
         <div class="section dark-section" id="footer-section">
             <footer>
                 <div class="social">
-                    <a href="#">
+                    <a href="https://www.instagram.com/hps_cansat/" target="_blank">
                         <i class="icon ion-social-instagram"></i>
                     </a>
-                    <a href="#">
-                        <i class="icon ion-social-snapchat"></i>
+                    <a href="https://www.youtube.com/channel/UCmWpKT-KKmBJxdJWPOLYhOQ" target="_blank">
+                        <i class="icon ion-social-youtube"></i>
                     </a>
                     <a href="#">
                         <i class="icon ion-social-twitter"></i>
-                    </a>
-                    <a href="#">
-                        <i class="icon ion-social-facebook"></i>
                     </a>
                 </div>
                 <p class="copyright">ESPAÑA 2023</p>
             </footer>
         </div>
+
+        <script src="./assets/js/chatbot.js"></script>
+
         <script>
             $(document).ready(function(){
                 $("#more-info-pop-up-container").hide();

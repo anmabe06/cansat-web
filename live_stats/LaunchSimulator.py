@@ -44,7 +44,7 @@ class LaunchSimulator():
         provisional_latitude = random.randint(30, 50)
         provisional_longitude = random.randint(30, 50)
         provisional_altitude = random.randint(0, 1000)
-        provisional_course = 0
+        provisional_course = [0, "N"]
         provisional_horizontal_speed = random.randint(8, 13)
         provisional_x_rotation = random.randint(0, 359)
         provisional_y_rotation = random.randint(0, 359)
